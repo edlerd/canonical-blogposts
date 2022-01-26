@@ -68,7 +68,7 @@
         .then(res => res.json()).then(out => out.slice(0, 3).forEach(post => {
         const publishDate = new Date(post.date)
         const postNode = template.content.cloneNode(true);
-        postNode.querySelector("#image-link").src = post.link;
+        postNode.querySelector("#image-link").href = post.link;
         postNode.querySelector("#image-link").removeAttribute('id');
         postNode.querySelector("#image").src = post.featured_media;
         postNode.querySelector("#image").removeAttribute('id');
