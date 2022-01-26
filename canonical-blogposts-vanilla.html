@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://assets.ubuntu.com/v1/vanilla-framework-version-3.0.1.min.css"/>
+    <title>Blogposts</title>
+    <style>
+        body {
+            padding-top: 20px;
+        }
+
+        .card-top-border {
+            border-top: 3px solid #a87ca0;
+        }
+
+        .clamp-two-lines {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            height: 4rem;
+        }
+    </style>
+</head>
+<body style=";">
+
+
+<div class="row u-equal-height u-clearfix" id="articles-list">
+</div>
+
+<template id="blogpost">
+    <div class="col-4">
+        <div class="p-card--highlighted u-no-padding card-top-border">
+            <div class="p-card__inner u-no-margin">
+                <p class="p-text--x-small-capitalised">
+                    cloud and server
+                </p>
+            </div>
+
+            <hr class=" u-no-margin">
+            <div class="p-card__inner">
+                <a id="image-link">
+                    <img class="p-card__image" alt="" src="" height="185" width="330" id="image">
+                </a>
+                <h4 class="clamp-two-lines">
+                    <a href="#" id="title"></a>
+                </h4>
+                <i>By <a id="author"></a> on <span id="publishDate"></span></i>
+            </div>
+
+            <hr class="u-no-margin--bottom"/>
+            <div class="p-card__inner">
+                Article
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    const articlesList = document.getElementById("articles-list");
+    const template = document.getElementById("blogpost");
+
+    const url = 'https://people.canonical.com/~anthonydillon/wp-json/wp/v2/posts.json';
+
+    fetch(url)
+        .then(res => res.json()).then(out => out.slice(0, 3).forEach(post => {
+        const publishDate = new Date(post.date)
+        const postNode = template.content.cloneNode(true);
+        postNode.querySelector("#image-link").src = post.link;
+        postNode.querySelector("#image-link").removeAttribute('id');
+        postNode.querySelector("#image").src = post.featured_media;
+        postNode.querySelector("#image").removeAttribute('id');
+        postNode.querySelector("#title").innerText = post.title.rendered;
+        postNode.querySelector("#title").href = post.link;
+        postNode.querySelector("#title").title = post.title.rendered;
+        postNode.querySelector("#title").removeAttribute('id');
+        postNode.querySelector("#author").innerText = post._embedded.author[0].name;
+        postNode.querySelector("#author").href = post._embedded.author[0].link;
+        postNode.querySelector("#author").removeAttribute('id');
+        postNode.querySelector("#publishDate").innerText = publishDate.toLocaleString('en-GB', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        postNode.querySelector("#publishDate").removeAttribute('id');
+        articlesList.appendChild(postNode);
+    }))
+        .catch(err => console.error(err));
+</script>
+</body>
